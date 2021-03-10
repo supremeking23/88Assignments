@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>My Pacman</title>
+
+		<link rel="preconnect" href="https://fonts.gstatic.com" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			body {
+				background: black;
+				margin: 0;
+				font-family: "Press Start 2P", cursive;
+			}
+
+			div.row div {
+				/* the brick and the coin */
+				width: 20px;
+				height: 20px;
+				/* border: 1px solid black; */
+				display: inline-block;
+			}
+
+			.row {
+				height: 20px;
+			}
+
+			.brick {
+				background-color: blue;
+			}
+
+			.coin {
+				background-image: url("assets/coin_main.gif");
+				background-repeat: no-repeat;
+				background-position: center;
+			}
+
+			.cherry {
+				background-image: url("assets/cherry.webp");
+				background-repeat: no-repeat;
+				background-size: cover;
+				background-position: center;
+			}
+			#pacman {
+				background-image: url("assets/pacman.gif");
+				background-repeat: no-repeat;
+				background-position: center;
+				/* shrink */
+				background-size: cover;
+				width: 20px;
+				height: 20px;
+				position: absolute;
+			}
+
+			#yellow_monster {
+				background-image: url("assets/monster-yellow.gif");
+				background-repeat: no-repeat;
+				background-position: center;
+				/* shrink */
+				background-size: cover;
+				width: 20px;
+				height: 20px;
+				position: absolute;
+			}
+
+			#red_monster {
+				background-image: url("assets/monster-red.gif");
+				background-repeat: no-repeat;
+				background-position: center;
+				/* shrink */
+				background-size: cover;
+				width: 20px;
+				height: 20px;
+				position: absolute;
+			}
+
+			/* #world {
+				position: relative;
+			} */
+
+			.empty {
+			}
+
+			#score {
+				border: 1px solid white;
+				width: 50px;
+				height: 50px;
+				color: white;
+				padding: 7px;
+				text-align: center;
+				/* position: absolute; */
+				/* top: 0px;
+				left: 410px; */
+				/* margin-right: 300px; */
+			}
+
+			.container {
+				/* background: red; */
+				display: flex;
+				justify-content: space-between;
+			}
+
+			.right-part {
+				/* background: red; */
+				height: 100vh;
+				justify-content: center;
+				align-items: center;
+				display: flex;
+				flex-direction: column;
+				width: 50%;
+			}
+
+			.title {
+				display: flex;
+				flex-direction: column;
+			}
+
+			.title h1 {
+				color: white;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div id="world"></div>
+
+			<div id="pacman"></div>
+			<div id="yellow_monster"></div>
+			<div id="red_monster"></div>
+
+			<div class="right-part">
+				<div id="score">0</div>
+
+				<div class="title">
+					<h1>Pacman Game</h1>
+					<h1>sdas</h1>
+				</div>
+			</div>
+		</div>
+		<script>
+			// 1 - coin, 2-brick,3 berry
+
+			//map 1
+			var world1 = [
+				[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+				[2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2],
+				[2, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 3, 1, 2, 1, 1, 2],
+				[2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2],
+				[2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2],
+				[2, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 3, 1, 2],
+				[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+			];
+
+			// //map 2
+			var world2 = [
+				[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+				[2, 0, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2],
+				[2, 1, 2, 2, 1, 1, 1, 1, 2, 1, 1, 3, 2, 1, 1, 1, 2],
+				[2, 1, 2, 2, 3, 1, 1, 2, 2, 2, 1, 3, 1, 2, 1, 1, 2],
+				[2, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2],
+				[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 2, 2],
+				[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+			];
+
+			//map 3 -- easy round
+			var world3 = [
+				[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+				[2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+				[2, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+				[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+				[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 1, 1, 1, 1, 2],
+				[2, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+				[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+			];
+
+			//map 4 --  round
+			var world4 = [
+				[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+				[2, 0, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+				[2, 1, 1, 1, 1, 1, 1, 3, 1, 3, 1, 1, 1, 1, 1, 1, 2],
+				[2, 1, 1, 1, 2, 2, 1, 1, 1, 2, 2, 1, 1, 3, 1, 1, 2],
+				[2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2],
+				[2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+				[2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+				[2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 3, 1, 1, 2],
+				[2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2],
+				[2, 1, 1, 1, 2, 2, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 2],
+				[2, 1, 1, 1, 1, 1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 2],
+				[2, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+				[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+				[2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+				[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+			];
+
+			var world5 = [
+				[
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+				],
+				[
+					2,
+					0,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					2,
+					2,
+					2,
+					2,
+					2,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					2,
+					0,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					2,
+					0,
+					0,
+					0,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					2,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					2,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					3,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					3,
+					1,
+					2,
+					1,
+					2,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					2,
+					2,
+					2,
+					2,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					2,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					2,
+					2,
+					1,
+					1,
+					1,
+					2,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					2,
+					2,
+					2,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					2,
+					2,
+					2,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					3,
+					3,
+					3,
+					3,
+					3,
+					3,
+					3,
+					3,
+					3,
+					3,
+					3,
+					3,
+					3,
+					3,
+					3,
+					3,
+					3,
+					3,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					2,
+					2,
+					2,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					2,
+					2,
+					2,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+					1,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					3,
+					1,
+					1,
+					3,
+					1,
+					3,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					2,
+					2,
+					1,
+					1,
+					1,
+					2,
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					3,
+					1,
+					1,
+					3,
+					1,
+					1,
+					3,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					3,
+					3,
+					3,
+					1,
+					1,
+					3,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					3,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					3,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					3,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					1,
+					2,
+				],
+				[
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+					2,
+				],
+			];
+			//random pic
+			var random = Math.floor(Math.random() * 4 + 1);
+
+			var worlds = [world1, world2, world3, world4, world5];
+			// worlds[random];
+			world = worlds[random];
+
+			var pacman = {
+				// object
+				x: 1,
+				y: 1,
+			};
+
+			var yellowMonter = {
+				x: 5,
+				y: 1,
+			};
+
+			var redMonter = {
+				x: 5,
+				y: 5,
+			};
+
+			var score = 0;
+
+			function randomAppearOfCherry() {
+				for (var i = 0; i < world.length; i++) {
+					for (var j = 0; j < world[i].length; j++) {
+						if (world[i][j] == 0) {
+							// alert("pwede na lagyan");
+						}
+						// console.log(world[i][j]);
+						// console.log(world);
+					}
+				}
+			}
+
+			function displayWorld() {
+				var output = "";
+				for (var i = 0; i < world.length; i++) {
+					output += "\n<div class='row'>\n";
+					for (var j = 0; j < world[i].length; j++) {
+						// output = output + world[i][j];
+						if (world[i][j] == 2) {
+							output += "<div class='brick'></div>";
+						} else if (world[i][j] == 1) {
+							output += "<div class='coin'></div>";
+						} else if (world[i][j] == 3) {
+							output += "<div class='cherry'></div>";
+						}
+
+						if (world[i][j] == 0) {
+							output += "<div class='empty'></div>";
+						}
+					}
+
+					output += "\n</div>";
+				}
+
+				// for (var i = 0; i < world.length; i++) {
+				// 	for (var j = 0; j < world[i].length; j++) {
+				// 		if (world[i][j] == 0) {
+				// 			// alert("pwede na lagyan");
+				// 			console.log(world);
+				// 		}
+				// 		// console.log(world[i][j]);
+				// 	}
+				// }
+
+				// console.log(output);
+				document.getElementById("world").innerHTML = output;
+			}
+
+			function displayPacman() {
+				// 41 min
+				document.getElementById("pacman").style.top = pacman.y * 20 + "px";
+				document.getElementById("pacman").style.left = pacman.x * 20 + "px";
+			}
+
+			function displayYelloMonter() {
+				document.getElementById("yellow_monster").style.top =
+					yellowMonter.y * 20 + "px";
+				document.getElementById("yellow_monster").style.left =
+					yellowMonter.x * 20 + "px";
+			}
+
+			function displayRedMonster() {
+				document.getElementById("red_monster").style.top =
+					redMonter.y * 20 + "px";
+				document.getElementById("red_monster").style.left =
+					redMonter.x * 20 + "px";
+			}
+
+			function displayScore() {
+				document.getElementById("score").innerHTML = score;
+			}
+
+			function pointsBasedOnEating() {
+				if (world[pacman.y][pacman.x] == 1) {
+					world[pacman.y][pacman.x] = 0;
+					score += 10;
+					displayScore();
+					displayWorld();
+				} else if (world[pacman.y][pacman.x] == 3) {
+					world[pacman.y][pacman.x] = 0;
+					score += 20;
+					displayScore();
+					displayWorld();
+				}
+			}
+
+			function pacmansMovement(e) {
+				//cartesian plane logic
+				if (e.keyCode == 37 && world[pacman.y][pacman.x - 1] != 2) {
+					pacman.x--;
+
+					// pacman.x -- 20;
+				} else if (e.keyCode == 39 && world[pacman.y][pacman.x + 1] != 2) {
+					pacman.x++;
+					// pacman.x += 20;
+					//right
+				} else if (e.keyCode == 38 && world[pacman.y - 1][pacman.x] != 2) {
+					pacman.y--;
+					//pacman.y -= 20;
+					//bottom
+				} else if (e.keyCode == 40 && world[pacman.y + 1][pacman.x] != 2) {
+					pacman.y++;
+					//pacman.y += 20;
+					//top
+				}
+			}
+
+			function monstersMovement(e) {
+				//for the meantime
+				if (e.keyCode == 37 && world[yellowMonter.y][yellowMonter.x - 1] != 2) {
+					yellowMonter.x--;
+					// pacman.x -- 20;
+				} else if (
+					e.keyCode == 39 &&
+					world[yellowMonter.y][yellowMonter.x + 1] != 2
+				) {
+					yellowMonter.x++;
+
+					// pacman.x -- 20;
+				} else if (
+					e.keyCode == 38 &&
+					world[yellowMonter.y - 1][yellowMonter.x] != 2
+				) {
+					yellowMonter.y--;
+					// pacman.x -- 20;
+				} else if (
+					e.keyCode == 40 &&
+					world[yellowMonter.y + 1][yellowMonter.x] != 2
+				) {
+					yellowMonter.y++;
+					// pacman.x -- 20;
+				}
+
+				if (e.keyCode == 37 && world[redMonter.y][redMonter.x - 1] != 2) {
+					redMonter.x--;
+					// pacman.x -- 20;
+				} else if (
+					e.keyCode == 39 &&
+					world[redMonter.y][redMonter.x + 1] != 2
+				) {
+					redMonter.x++;
+
+					// pacman.x -- 20;
+				} else if (
+					e.keyCode == 38 &&
+					world[redMonter.y - 1][redMonter.x] != 2
+				) {
+					redMonter.y--;
+					// pacman.x -- 20;
+				} else if (
+					e.keyCode == 40 &&
+					world[redMonter.y + 1][redMonter.x] != 2
+				) {
+					redMonter.y++;
+					// pacman.x -- 20;
+				}
+			}
+
+			document.onkeydown = function (e) {
+				//restart
+				console.log(world[pacman.y][pacman.x]);
+				if (e.keyCode == 32) {
+					window.location.reload();
+				}
+
+				pacmansMovement(e);
+
+				pointsBasedOnEating();
+				displayPacman();
+				displayYelloMonter();
+				displayRedMonster();
+				monstersMovement(e);
+			}; // end of keydown
+
+			//display on initial load
+			displayWorld();
+			displayPacman();
+			displayYelloMonter();
+			displayRedMonster();
+
+			// randomAppearOfCherry();
+		</script>
+	</body>
+</html>
