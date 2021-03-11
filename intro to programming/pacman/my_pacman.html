@@ -193,6 +193,8 @@
 			var isGameOver = false;
 			var world = null;
 			var select = document.querySelector(".maze-selector");
+			var powerup = new Audio("assets/power-up.mp3");
+			var gameOverSound = new Audio("assets/game-over.wav");
 
 			// 1 - coin, 2-brick,3 berry
 			function worldsCollection() {
@@ -1813,10 +1815,12 @@
 				if (world[pacman.y][pacman.x] == 1) {
 					world[pacman.y][pacman.x] = 0;
 					score += 10;
+
 					displayScore();
 					displayWorld();
 				} else if (world[pacman.y][pacman.x] == 3) {
 					world[pacman.y][pacman.x] = 0;
+					powerup.play();
 					score += 20;
 					displayScore();
 					displayWorld();
@@ -1993,11 +1997,12 @@
 							"<p>You have been caught by " +
 							theMonster +
 							" monster</p>";
+						gameOverSound.play();
 					}, 200);
 
 					setTimeout(() => {
 						window.location.reload();
-					}, 1500);
+					}, 1900);
 				}
 			}; // end of keydown
 
