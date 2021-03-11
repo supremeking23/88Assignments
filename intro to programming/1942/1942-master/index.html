@@ -174,7 +174,7 @@
 							// enemies.splice(enemies[j], 1);
 							// enemies[enemies.length - i] = enemies[j];
 							// enemies.pop();
-							console.log("bullet", i, "collide with plane", j);
+							// console.log("bullet", i, "collide with plane", j);
 
 							output += `<div class="enemy1" style="background-position: 60px -37px;top:${enemies[j].y}px;left:${enemies[j].x}px"></div>`;
 						}
@@ -183,6 +183,8 @@
 						// console.log(j);
 					}
 				}
+
+				// console.log(output);
 
 				document.getElementById("enemies").innerHTML += output;
 			}
