@@ -146,6 +146,14 @@
 			#message {
 				color: #fff;
 			}
+
+			.instructions {
+				color: #fff;
+			}
+
+			.maze-selector {
+				width: 50%;
+			}
 		</style>
 	</head>
 	<body>
@@ -163,13 +171,31 @@
 				<div class="title">
 					<h1>Pacman Game</h1>
 					<div id="message"></div>
+					<div class="instructions">
+						<h2>Instructions</h2>
+						<ul>
+							<li>Press Spacebar to randomly select a maze</li>
+							<li>use to dropdown menu to select a maze</li>
+						</ul>
+						<select name="" id="maze-choice" class="maze-selector">
+							<option value="">----------- Pick a maze -----------</option>
+							<option value="maze1">Maze 1</option>
+							<option value="maze2">Maze 2</option>
+							<option value="maze3">Maze 3</option>
+							<option value="maze4">Maze 4</option>
+							<option value="maze5">Maze 5</option>
+						</select>
+					</div>
 				</div>
 			</div>
 		</div>
 		<script>
 			var isGameOver = false;
+			var world = null;
+			var select = document.querySelector(".maze-selector");
+
 			// 1 - coin, 2-brick,3 berry
-			function picKWorld() {
+			function worldsCollection() {
 				var world1 = [
 					[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
 					[2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2],
@@ -1663,6 +1689,11 @@
 						2,
 					],
 				];
+
+				return { world1, world2, world3, world4, world5 };
+			}
+
+			function picKWorld() {
 				//random pic
 				var random = Math.floor(Math.random() * 4 + 1);
 
@@ -1670,34 +1701,33 @@
 
 				return worlds[random];
 			}
-			//map 1
+
+			var { world1, world2, world3, world4, world5 } = worldsCollection();
+
+			select.addEventListener("change", (event) => {
+				// alert("hi" + event.target.value);
+
+				if (event.target.value == "maze1") {
+					world = world1;
+				} else if (event.target.value == "maze2") {
+					world = world2;
+				} else if (event.target.value == "maze3") {
+					world = world3;
+				} else if (event.target.value == "maze4") {
+					world = world4;
+				} else if (event.target.value == "maze5") {
+					world = world5;
+				}
+
+				displayWorld();
+			});
+
+			// alert(number);
 
 			// worlds[random];
-			world = picKWorld();
-
-			var pacmanFace = "pacman";
-			var pacman = {
-				// object
-				x: 1,
-				y: 1,
-			};
-
-			var yellowMonter = {
-				x: 5,
-				y: 1,
-			};
-
-			var pinkMonter = {
-				x: 10,
-				y: 2,
-			};
-
-			var redMonter = {
-				x: 5,
-				y: 5,
-			};
-
-			var score = 0;
+			if (world == null) {
+				world = picKWorld();
+			}
 
 			function displayWorld() {
 				var output = "";
@@ -1723,6 +1753,30 @@
 
 				document.getElementById("world").innerHTML = output;
 			}
+
+			var pacmanFace = "pacman";
+			var pacman = {
+				// object
+				x: 1,
+				y: 1,
+			};
+
+			var yellowMonter = {
+				x: 5,
+				y: 1,
+			};
+
+			var pinkMonter = {
+				x: 10,
+				y: 2,
+			};
+
+			var redMonter = {
+				x: 5,
+				y: 5,
+			};
+
+			var score = 0;
 
 			function displayPacman() {
 				// 41 min
@@ -1824,28 +1878,37 @@
 					// pacman.x -- 20;
 				}
 
-				if (e.keyCode == 37 && world[redMonter.y][redMonter.x - 1] != 2) {
-					redMonter.x--;
-					// pacman.x -- 20;
-				} else if (
-					e.keyCode == 39 &&
-					world[redMonter.y][redMonter.x + 1] != 2
-				) {
-					redMonter.x++;
+				//method 2 //not good as well
+				// && world[redMonter.y][redMonter.x - 1] != 2
+				if (e.keyCode == 37 && pacman.x < redMonter.x) {
+					// if the x coordinate of pacman is less than the coordinate of red make them closer
+
+					if (world[redMonter.y][redMonter.x - 1]) {
+						redMonter.x--;
+					}
 
 					// pacman.x -- 20;
-				} else if (
-					e.keyCode == 38 &&
-					world[redMonter.y - 1][redMonter.x] != 2
-				) {
+				} else if (e.keyCode == 39 && pacman.x > redMonter.x) {
+					if (world[redMonter.y][redMonter.x + 1] != 2) {
+						redMonter.x++;
+					}
+
+					//if pacman goes right move left
+					// pacman.x -- 20;
+				} else if (e.keyCode == 38 && pacman.y > redMonter.y) {
+					if (world[redMonter.y - 1][redMonter.x] != 2) {
+						redMonter.y++;
+					}
+
+					// pacman.x -- 20;
+				} else if (e.keyCode == 40 && pacman.y < redMonter.y) {
+					if (world[redMonter.y + 1][redMonter.x] != 2) {
+						redMonter.y--;
+					}
+
 					redMonter.y--;
 					// pacman.x -- 20;
-				} else if (
-					e.keyCode == 40 &&
-					world[redMonter.y + 1][redMonter.x] != 2
-				) {
-					redMonter.y++;
-					// pacman.x -- 20;
+					// if pacman goes down, move up
 				}
 
 				//abnormal
