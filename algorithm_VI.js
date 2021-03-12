@@ -52,6 +52,7 @@ function returnReversed(array) {
 }
 
 console.log(returnReversed([1, 2, 3]));
+console.log(returnReversed([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
 
 //4 Create a function that changes a given array to list each original element twice, retaining original order.  Have the function return the new array.  For example repeatTwice( [4,”Ulysses”, 42, false] ) should return [4,4, “Ulysses”, “Ulysses”, 42, 42, false, false].
 
@@ -66,3 +67,4 @@ function repeatTwice(array) {
 	return newArray;
 }
 console.log(repeatTwice([4, "Ulysses", 42, false]));
+console.log(repeatTwice([4, "Ivan", 42 + 2, false]));

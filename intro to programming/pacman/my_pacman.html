@@ -192,9 +192,30 @@
 		<script>
 			var isGameOver = false;
 			var world = null;
-			var select = document.querySelector(".maze-selector");
+			var mazeSelector = document.querySelector(".maze-selector");
 			var powerup = new Audio("assets/power-up.mp3");
 			var gameOverSound = new Audio("assets/game-over.wav");
+			var score = 0;
+			var pacman = {
+				// object
+				x: 1,
+				y: 1,
+			};
+
+			var yellowMonter = {
+				x: 5,
+				y: 1,
+			};
+
+			var pinkMonter = {
+				x: 10,
+				y: 2,
+			};
+
+			var redMonter = {
+				x: 5,
+				y: 5,
+			};
 
 			// 1 - coin, 2-brick,3 berry
 			function worldsCollection() {
@@ -1695,7 +1716,7 @@
 				return { world1, world2, world3, world4, world5 };
 			}
 
-			function picKWorld() {
+			function pickWorld() {
 				//random pic
 				var random = Math.floor(Math.random() * 4 + 1);
 
@@ -1706,7 +1727,7 @@
 
 			var { world1, world2, world3, world4, world5 } = worldsCollection();
 
-			select.addEventListener("change", (event) => {
+			mazeSelector.addEventListener("change", (event) => {
 				// alert("hi" + event.target.value);
 
 				if (event.target.value == "maze1") {
@@ -1721,14 +1742,31 @@
 					world = world5;
 				}
 
+				// reset all once select dropdown changes state
+				score = 0;
+				pacman.x = 1;
+				pacman.y = 1;
+
+				yellowMonter.x = 5;
+				yellowMonter.y = 1;
+
+				pinkMonter.x = 10;
+				pinkMonter.y = 2;
+
+				redMonter.x = 5;
+				redMonter.y = 5;
+
+				displayPacman();
+				displayRedMonster();
+				displayYelloMonter();
+				displayPinkMonster();
 				displayWorld();
+				displayScore();
 			});
 
-			// alert(number);
-
-			// worlds[random];
 			if (world == null) {
-				world = picKWorld();
+				//choose random
+				world = pickWorld();
 			}
 
 			function displayWorld() {
@@ -1755,30 +1793,6 @@
 
 				document.getElementById("world").innerHTML = output;
 			}
-
-			var pacmanFace = "pacman";
-			var pacman = {
-				// object
-				x: 1,
-				y: 1,
-			};
-
-			var yellowMonter = {
-				x: 5,
-				y: 1,
-			};
-
-			var pinkMonter = {
-				x: 10,
-				y: 2,
-			};
-
-			var redMonter = {
-				x: 5,
-				y: 5,
-			};
-
-			var score = 0;
 
 			function displayPacman() {
 				// 41 min
@@ -1820,6 +1834,7 @@
 					displayWorld();
 				} else if (world[pacman.y][pacman.x] == 3) {
 					world[pacman.y][pacman.x] = 0;
+					powerup.load();
 					powerup.play();
 					score += 20;
 					displayScore();
@@ -1844,13 +1859,13 @@
 				} else if (e.keyCode == 38 && world[pacman.y - 1][pacman.x] != 2) {
 					pacman.y--;
 					//pacman.y -= 20;
-					//bottom
+					//top
 					document.getElementById("pacman").style.backgroundImage =
 						"url('assets/up.gif')";
 				} else if (e.keyCode == 40 && world[pacman.y + 1][pacman.x] != 2) {
 					pacman.y++;
 					//pacman.y += 20;
-					//top
+					//down
 					document.getElementById("pacman").style.backgroundImage =
 						"url('assets/down.gif')";
 				}
@@ -1858,6 +1873,7 @@
 
 			function monstersMovement(e) {
 				//for the meantime
+				// same movement as pacman
 				if (e.keyCode == 37 && world[yellowMonter.y][yellowMonter.x - 1] != 2) {
 					yellowMonter.x--;
 					// pacman.x -- 20;
@@ -1887,7 +1903,7 @@
 				if (e.keyCode == 37 && pacman.x < redMonter.x) {
 					// if the x coordinate of pacman is less than the coordinate of red make them closer
 
-					if (world[redMonter.y][redMonter.x - 1]) {
+					if (world[redMonter.y][redMonter.x - 1] != 2) {
 						redMonter.x--;
 					}
 
@@ -2002,7 +2018,7 @@
 
 					setTimeout(() => {
 						window.location.reload();
-					}, 1900);
+					}, 2900);
 				}
 			}; // end of keydown
 

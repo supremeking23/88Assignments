@@ -29,6 +29,17 @@
 				height: 25px;
 				position: absolute;
 			}
+
+			.explosion {
+				background: url("1942.gif");
+				background-position: 60px -25px;
+				width: 28px;
+				height: 65px;
+				position: absolute;
+				opacity: 0;
+				transition: visibility 0s, opacity 0.5s linear;
+			}
+
 			.bullet {
 				background: url("1942.gif");
 				background-position: -185px -400px;
@@ -66,29 +77,30 @@
 				score: 0,
 			};
 
+			//can be refactor
 			var enemies = [
-				{ x: 50, y: 50 },
-				{ x: 250, y: 50 },
-				{ x: 450, y: 50 },
-				{ x: 250, y: 100 },
-				{ x: 50, y: 100 },
-				{ x: 250, y: 100 },
-				{ x: 450, y: 150 },
-				{ x: 450, y: 50 },
-				{ x: 600, y: 50 },
-				{ x: 600, y: 50 },
-				{ x: 600, y: 100 },
-				{ x: 700, y: 100 },
-				{ x: 800, y: 100 },
-				{ x: 800, y: 150 },
-				{ x: 600, y: 300 },
-				{ x: 700, y: 100 },
-				{ x: 800, y: 100 },
-				{ x: 900, y: 150 },
-				{ x: 1100, y: 100 },
-				{ x: 1400, y: 100 },
-				{ x: 1200, y: 100 },
-				{ x: 1000, y: 150 },
+				{ x: 50, y: 50, type: "enemy1" },
+				{ x: 250, y: 50, type: "enemy1" },
+				{ x: 450, y: 50, type: "enemy1" },
+				{ x: 250, y: 100, type: "enemy1" },
+				{ x: 50, y: 100, type: "enemy1" },
+				{ x: 250, y: 100, type: "enemy1" },
+				{ x: 450, y: 150, type: "enemy1" },
+				{ x: 450, y: 50, type: "enemy1" },
+				{ x: 600, y: 50, type: "enemy1" },
+				{ x: 600, y: 50, type: "enemy1" },
+				{ x: 600, y: 100, type: "enemy1" },
+				{ x: 700, y: 100, type: "enemy1" },
+				{ x: 800, y: 100, type: "enemy1" },
+				{ x: 800, y: 150, type: "enemy1" },
+				{ x: 600, y: 300, type: "enemy1" },
+				{ x: 700, y: 100, type: "enemy1" },
+				{ x: 800, y: 100, type: "enemy1" },
+				{ x: 900, y: 150, type: "enemy1" },
+				{ x: 1100, y: 100, type: "enemy1" },
+				{ x: 1400, y: 100, type: "enemy1" },
+				{ x: 1200, y: 100, type: "enemy1" },
+				{ x: 1000, y: 150, type: "enemy1" },
 			];
 
 			var bullets = [];
@@ -105,7 +117,13 @@
 			function displayEnemies() {
 				var output = "";
 				for (var i = 0; i < enemies.length; i++) {
+					// if (enemies[i].type == "explosion") {
+					// 	enemies[i].type = "enemy1";
+					// 	output += `<div class="${enemies[i].type}" style="top:${enemies[i].y}px;left:${enemies[i].x}px"></div>`;
+					// }
 					output += `<div class="enemy1" style="top:${enemies[i].y}px;left:${enemies[i].x}px"></div>`;
+
+					// output += `<div class="${enemies[i].type}" style="top:${enemies[i].y}px;left:${enemies[i].x}px"></div>`;
 				}
 				// console.log(output);
 				document.getElementById("enemies").innerHTML = output;
@@ -131,6 +149,7 @@
 				if (e.keyCode == 32) {
 					//fire
 					bullets.push({ x: hero.x + 5, y: hero.y - 14 });
+					fire.load();
 					fire.play();
 
 					// console.log(bullets);
@@ -165,11 +184,33 @@
 				var output = "";
 				for (var i = 0; i < bullets.length; i++) {
 					for (var j = 0; j < enemies.length; j++) {
+						///method 2
+
+						// if (
+						// 	Math.abs(bullets[i].x - enemies[j].x) < 10 &&
+						// 	Math.abs(bullets[i].y - enemies[j].y) < 10 &&
+						// 	enemies[j].type != "explosion"
+						// ) {
+						// 	hero.score += 10;
+						// 	explosion.load();
+						// 	explosion.play();
+						// 	enemies[j].type = "explosion";
+						// 	// bullets[i] = bullets[bullets.length - 1];
+						// 	// bullets.pop();
+						// 	// return;
+						// 	// enemies.splice(enemies[j], 1);
+						// 	// enemies[enemies.length - i] = enemies[j];
+						// 	// enemies.pop();
+						// 	// console.log("bullet", i, "collide with plane", j);
+						// }
+
+						///method 1
 						if (
 							Math.abs(bullets[i].x - enemies[j].x) < 10 &&
 							Math.abs(bullets[i].y - enemies[j].y) < 10
 						) {
 							hero.score += 10;
+							explosion.load();
 							explosion.play();
 							// enemies.splice(enemies[j], 1);
 							// enemies[enemies.length - i] = enemies[j];
@@ -177,17 +218,45 @@
 							// console.log("bullet", i, "collide with plane", j);
 
 							output += `<div class="enemy1" style="background-position: 60px -37px;top:${enemies[j].y}px;left:${enemies[j].x}px"></div>`;
+						} else if (
+							Math.abs(hero.x - enemies[j].x) < 10 &&
+							Math.abs(hero.y - enemies[j].y) < 10
+						) {
+							output += `<div class="enemy1" style="background-position: 60px -37px;top:${enemies[j].y}px;left:${enemies[j].x}px"></div>`;
 						}
-
-						// console.log(i);
-						// console.log(j);
 					}
 				}
 
-				// console.log(output);
-
 				document.getElementById("enemies").innerHTML += output;
 			}
+
+			function detectHeroCollision() {
+				for (var i = 0; i < enemies.length; i++) {
+					if (
+						Math.abs(hero.x - enemies[i].x) < 10 &&
+						Math.abs(hero.y - enemies[i].y) < 5
+					) {
+						// alert("deads");
+						hero.score -= 500;
+						document.getElementById("hero").style.backgroundPosition =
+							" 60px -25px";
+					}
+				}
+			}
+
+			function returnHeroStatus() {
+				for (var i = 0; i < enemies.length; i++) {
+					if (
+						Math.abs(hero.x - enemies[i].x) < 10 &&
+						Math.abs(hero.y - enemies[i].y) < 5
+					) {
+						// alert("deads");
+						//true means dead
+						return true;
+					}
+				}
+			}
+
 			function moveEnemies() {
 				for (var i = 0; i < enemies.length; i++) {
 					enemies[i].y += 5;
@@ -208,17 +277,21 @@
 				displayScore();
 				detectCollision();
 				// displayEnemies();
+				detectHeroCollision();
 			}
-
-			// function l() {
-			// 	gameLoop();
-			// }
 
 			// setInterval(l(), 100);
 			setInterval(() => {
-				gameLoop();
+				var isgameOver = returnHeroStatus();
+				if (isgameOver) {
+					// clearInterval()
+					// alert("game over kana boi");
+				} else {
+					// alert(isgameOver);
+					gameLoop();
+					console.log(isgameOver);
+				}
 			}, 100);
-
 			// on init
 		</script>
 	</body>
