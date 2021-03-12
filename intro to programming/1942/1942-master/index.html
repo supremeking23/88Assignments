@@ -7,7 +7,7 @@
 				background-color: black;
 			}
 			#container {
-				background: url("field-1.jpg");
+				background: url("field-2.jpg");
 				width: 100%;
 				height: 100vh;
 			}
@@ -18,13 +18,45 @@
 				height: 50px;
 				position: absolute;
 			}
+
+			/* #hero {
+				background: url("arcade.png");
+				background-position: -10px -525px;
+				width: 164px;
+				height: 100px;
+				position: absolute;
+			} */
 			.enemy1 {
 				background: url("1942.gif");
 				/* background-position: 60px -25px;
 				width: 28px;
 				height: 65px; */
-
 				background-position: 50px -10px;
+				/* background-position: 121px -234px; */
+				width: 28px;
+				height: 23px;
+				position: absolute;
+			}
+
+			.enemy2 {
+				background: url("1942.gif");
+				/* background-position: 60px -25px;
+				width: 28px;
+				height: 65px; */
+				background-position: 82px -10px;
+
+				width: 28px;
+				height: 23px;
+				position: absolute;
+			}
+
+			.enemy3 {
+				background: url("1942.gif");
+				/* background-position: 60px -25px;
+				width: 28px;
+				height: 65px; */
+
+				background-position: 121px -234px;
 				width: 28px;
 				height: 25px;
 				position: absolute;
@@ -36,8 +68,8 @@
 				width: 28px;
 				height: 65px;
 				position: absolute;
-				opacity: 0;
-				transition: visibility 0s, opacity 0.5s linear;
+				/* opacity: 0;
+				transition: visibility 0s, opacity 0.5s linear; */
 			}
 
 			.bullet {
@@ -71,40 +103,61 @@
 		<script>
 			var fire = new Audio("sounds/fire.mp3");
 			var explosion = new Audio("sounds/explosion.mp3");
+			var collision = new Audio("sounds/collision.mp3");
 			var hero = {
 				x: 900,
 				y: 600,
 				score: 0,
 			};
+			//for small airplane
+			// var hero = {
+			// 	x: 900,
+			// 	y: 600,
+			// 	score: 0,
+			// };
 
-			//can be refactor
-			var enemies = [
-				{ x: 50, y: 50, type: "enemy1" },
-				{ x: 250, y: 50, type: "enemy1" },
-				{ x: 450, y: 50, type: "enemy1" },
-				{ x: 250, y: 100, type: "enemy1" },
-				{ x: 50, y: 100, type: "enemy1" },
-				{ x: 250, y: 100, type: "enemy1" },
-				{ x: 450, y: 150, type: "enemy1" },
-				{ x: 450, y: 50, type: "enemy1" },
-				{ x: 600, y: 50, type: "enemy1" },
-				{ x: 600, y: 50, type: "enemy1" },
-				{ x: 600, y: 100, type: "enemy1" },
-				{ x: 700, y: 100, type: "enemy1" },
-				{ x: 800, y: 100, type: "enemy1" },
-				{ x: 800, y: 150, type: "enemy1" },
-				{ x: 600, y: 300, type: "enemy1" },
-				{ x: 700, y: 100, type: "enemy1" },
-				{ x: 800, y: 100, type: "enemy1" },
-				{ x: 900, y: 150, type: "enemy1" },
-				{ x: 1100, y: 100, type: "enemy1" },
-				{ x: 1400, y: 100, type: "enemy1" },
-				{ x: 1200, y: 100, type: "enemy1" },
-				{ x: 1000, y: 150, type: "enemy1" },
-			];
+			// can be refactor
+			function generateEnemies() {
+				var enemies = [];
+				var enemyClass = ["enemy1", "enemy2", "enemy3"];
+				for (var i = 1; i <= 20; i++) {
+					enemies.push({
+						x: Math.floor(Math.random() * 1000),
+						y: Math.floor(Math.random() * 300),
+						type: enemyClass[Math.floor(Math.random() * 3)],
+					});
+				}
+
+				return enemies;
+			}
+
+			var enemies = generateEnemies();
+			// var enemies = [
+			// 	{ x: 50, y: 50, type: "enemy1" },
+			// 	{ x: 250, y: 50, type: "enemy1" },
+			// 	{ x: 450, y: 50, type: "enemy1" },
+			// 	{ x: 250, y: 100, type: "enemy1" },
+			// 	{ x: 50, y: 100, type: "enemy1" },
+			// 	{ x: 250, y: 100, type: "enemy1" },
+			// 	{ x: 450, y: 150, type: "enemy1" },
+			// 	{ x: 450, y: 50, type: "enemy1" },
+			// 	{ x: 600, y: 50, type: "enemy1" },
+			// 	{ x: 600, y: 50, type: "enemy1" },
+			// 	{ x: 600, y: 100, type: "enemy1" },
+			// 	{ x: 700, y: 100, type: "enemy1" },
+			// 	{ x: 800, y: 100, type: "enemy1" },
+			// 	{ x: 800, y: 150, type: "enemy1" },
+			// 	{ x: 600, y: 300, type: "enemy1" },
+			// 	{ x: 700, y: 100, type: "enemy1" },
+			// 	{ x: 800, y: 100, type: "enemy1" },
+			// 	{ x: 900, y: 150, type: "enemy1" },
+			// 	{ x: 1100, y: 100, type: "enemy1" },
+			// 	{ x: 1400, y: 100, type: "enemy1" },
+			// 	{ x: 1200, y: 100, type: "enemy1" },
+			// 	{ x: 1000, y: 150, type: "enemy1" },
+			// ];
 
 			var bullets = [];
-
 			function displayHero() {
 				document.getElementById("hero").style.top = hero.y + "px";
 				document.getElementById("hero").style.left = hero.x + "px";
@@ -121,7 +174,8 @@
 					// 	enemies[i].type = "enemy1";
 					// 	output += `<div class="${enemies[i].type}" style="top:${enemies[i].y}px;left:${enemies[i].x}px"></div>`;
 					// }
-					output += `<div class="enemy1" style="top:${enemies[i].y}px;left:${enemies[i].x}px"></div>`;
+
+					output += `<div class="${enemies[i].type}" style="top:${enemies[i].y}px;left:${enemies[i].x}px"></div>`;
 
 					// output += `<div class="${enemies[i].type}" style="top:${enemies[i].y}px;left:${enemies[i].x}px"></div>`;
 				}
@@ -149,6 +203,7 @@
 				if (e.keyCode == 32) {
 					//fire
 					bullets.push({ x: hero.x + 5, y: hero.y - 14 });
+					// bullets.push({ x: hero.x + 75, y: hero.y - 14 });
 					fire.load();
 					fire.play();
 
@@ -169,14 +224,14 @@
 				for (var i = 0; i < bullets.length; i++) {
 					bullets[i].y -= 5;
 
-					// if (bullets[i].y < 0) {
-					// 	bullets[i] = bullets[bullets.length - 1];
-					// 	bullets.pop();
-					// }
-
 					if (bullets[i].y < 0) {
-						bullets.shift();
+						bullets[i] = bullets[bullets.length - 1];
+						bullets.pop();
 					}
+
+					// if (bullets[i].y < 0) {
+					// 	bullets.shift();
+					// }
 				}
 			}
 
@@ -217,12 +272,17 @@
 							// enemies.pop();
 							// console.log("bullet", i, "collide with plane", j);
 
-							output += `<div class="enemy1" style="background-position: 60px -37px;top:${enemies[j].y}px;left:${enemies[j].x}px"></div>`;
+							enemies[j].type = "explosion";
+
+							//remove for temp
+							// output += `<div class="enemy1" style="background-position: 60px -37px;top:${enemies[j].y}px;left:${enemies[j].x}px"></div>`;
 						} else if (
 							Math.abs(hero.x - enemies[j].x) < 10 &&
 							Math.abs(hero.y - enemies[j].y) < 10
 						) {
 							output += `<div class="enemy1" style="background-position: 60px -37px;top:${enemies[j].y}px;left:${enemies[j].x}px"></div>`;
+							// alert(hero.x - enemies[j].x);
+							// alert(hero.y - enemies[j].y);
 						}
 					}
 				}
@@ -238,8 +298,11 @@
 					) {
 						// alert("deads");
 						hero.score -= 500;
-						document.getElementById("hero").style.backgroundPosition =
-							" 60px -25px";
+						if (hero.score < 0) {
+							document.getElementById("hero").style.backgroundPosition =
+								" 60px -25px";
+							collision.play();
+						}
 					}
 				}
 			}
@@ -276,20 +339,19 @@
 				moveBullets();
 				displayScore();
 				detectCollision();
-				// displayEnemies();
 				detectHeroCollision();
 			}
 
 			// setInterval(l(), 100);
 			setInterval(() => {
-				var isgameOver = returnHeroStatus();
-				if (isgameOver) {
+				// var isgameOver = returnHeroStatus();
+				if (hero.score < 0) {
+					displayScore();
 					// clearInterval()
 					// alert("game over kana boi");
 				} else {
 					// alert(isgameOver);
 					gameLoop();
-					console.log(isgameOver);
 				}
 			}, 100);
 			// on init
