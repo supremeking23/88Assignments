@@ -160,17 +160,17 @@
 					localStorage.setItem("numberOfEnemies", numberOfEnemies);
 					localStorage.setItem("speed", defaultSpeed);
 				} else if (event.target.value == "intermediate") {
-					defaultSpeed = 100;
+					defaultSpeed = 80;
 					numberOfEnemiesTimes = 3;
 					localStorage.setItem("numberOfEnemies", numberOfEnemies);
 					localStorage.setItem("speed", defaultSpeed);
 				} else if (event.target.value == "hard") {
-					defaultSpeed = 70;
+					defaultSpeed = 25;
 					numberOfEnemiesTimes = 5;
 					localStorage.setItem("numberOfEnemies", numberOfEnemies);
 					localStorage.setItem("speed", defaultSpeed);
 				} else if (event.target.value == "pro") {
-					defaultSpeed = 30;
+					defaultSpeed = 15;
 					numberOfEnemiesTimes = 10;
 				} else if (event.target.value == "ultra") {
 					defaultSpeed = 10;
@@ -396,8 +396,9 @@
 				for (var i = 0; i < enemies.length; i++) {
 					enemies[i].y += 5;
 					// 800
-					if (enemies[i].y > 685) {
+					if (enemies[i].y > 635) {
 						if (enemies[i].type == "explosion") {
+							enemies[i].y = 0;
 							enemies[i] = enemies[enemies.length - 1];
 							enemies.pop();
 						} else {
