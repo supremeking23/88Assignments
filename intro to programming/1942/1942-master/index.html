@@ -13,9 +13,6 @@
 		<style type="text/css">
 			body {
 				background-color: black;
-			}
-
-			h1 {
 				font-family: "Press Start 2P", cursive;
 			}
 
@@ -97,11 +94,10 @@
 				position: absolute;
 				border: 10px solid red;
 				top: 20px;
-				left: 1400px;
+				left: 1300px;
 				background-color: white;
 				padding: 10px;
 				font-size: 30px;
-				font-family: Arial;
 			}
 
 			#game-over-message {
@@ -112,8 +108,18 @@
 				background-color: white;
 				padding: 10px;
 				font-size: 30px;
-				font-family: Arial;
+
 				display: none;
+			}
+
+			#difficulty-settings {
+				position: absolute;
+				border: 10px solid red;
+				top: 200px;
+				left: 1250px;
+				background-color: white;
+				padding: 10px;
+				font-size: 30px;
 			}
 		</style>
 	</head>
@@ -128,11 +134,67 @@
 		<div id="game-over-message">
 			<h1>Game Over</h1>
 		</div>
+		<div id="difficulty-settings">
+			<select name="" id="level" class="level-selector">
+				<option value="">----------- Pick difficulty level -----------</option>
+				<option value="easy">Easy</option>
+				<option value="intermediate">Intermediate</option>
+				<option value="hard">Hard</option>
+				<option value="pro">Pro</option>
+				<option value="ultra">Ikaw na malakas</option>
+			</select>
+		</div>
 
 		<script>
 			var fire = new Audio("sounds/fire.mp3");
 			var explosion = new Audio("sounds/explosion.mp3");
 			var collision = new Audio("sounds/collision.mp3");
+			let defaultSpeed = 100;
+			var numberOfEnemiesTimes = 1;
+
+			var level = document.querySelector(".level-selector");
+			level.addEventListener("change", (event) => {
+				if (event.target.value == "easy") {
+					defaultSpeed = 100;
+					numberOfEnemiesTimes = 1;
+					localStorage.setItem("numberOfEnemies", numberOfEnemies);
+					localStorage.setItem("speed", defaultSpeed);
+				} else if (event.target.value == "intermediate") {
+					defaultSpeed = 100;
+					numberOfEnemiesTimes = 3;
+					localStorage.setItem("numberOfEnemies", numberOfEnemies);
+					localStorage.setItem("speed", defaultSpeed);
+				} else if (event.target.value == "hard") {
+					defaultSpeed = 70;
+					numberOfEnemiesTimes = 5;
+					localStorage.setItem("numberOfEnemies", numberOfEnemies);
+					localStorage.setItem("speed", defaultSpeed);
+				} else if (event.target.value == "pro") {
+					defaultSpeed = 30;
+					numberOfEnemiesTimes = 10;
+				} else if (event.target.value == "ultra") {
+					defaultSpeed = 10;
+					numberOfEnemiesTimes = 100;
+				}
+
+				generateEnemies();
+
+				setInterval(() => {
+					// var isgameOver = returnHeroStatus();
+					if (hero.score < 0) {
+						hero.score = 0;
+						displayScore();
+						document.getElementById("game-over-message").style.display =
+							"block";
+						document.getElementById("difficulty-settings").style.display =
+							"none";
+					} else {
+						// alert(isgameOver);
+						generateEnemies();
+						gameLoop();
+					}
+				}, defaultSpeed);
+			});
 
 			var hero = {
 				x: 900,
@@ -150,7 +212,7 @@
 			function generateEnemies() {
 				var enemies = [];
 				var enemyClass = ["enemy1", "enemy2", "enemy3"];
-				for (var i = 1; i <= 7; i++) {
+				for (var i = 1; i <= 7 * numberOfEnemiesTimes; i++) {
 					enemies.push({
 						x: Math.floor(Math.random() * 1000),
 						y: Math.floor(Math.random() * 300),
@@ -162,30 +224,6 @@
 			}
 
 			var enemies = generateEnemies();
-			// var enemies = [
-			// 	{ x: 50, y: 50, type: "enemy1" },
-			// 	{ x: 250, y: 50, type: "enemy1" },
-			// 	{ x: 450, y: 50, type: "enemy1" },
-			// 	{ x: 250, y: 100, type: "enemy1" },
-			// 	{ x: 50, y: 100, type: "enemy1" },
-			// 	{ x: 250, y: 100, type: "enemy1" },
-			// 	{ x: 450, y: 150, type: "enemy1" },
-			// 	{ x: 450, y: 50, type: "enemy1" },
-			// 	{ x: 600, y: 50, type: "enemy1" },
-			// 	{ x: 600, y: 50, type: "enemy1" },
-			// 	{ x: 600, y: 100, type: "enemy1" },
-			// 	{ x: 700, y: 100, type: "enemy1" },
-			// 	{ x: 800, y: 100, type: "enemy1" },
-			// 	{ x: 800, y: 150, type: "enemy1" },
-			// 	{ x: 600, y: 300, type: "enemy1" },
-			// 	{ x: 700, y: 100, type: "enemy1" },
-			// 	{ x: 800, y: 100, type: "enemy1" },
-			// 	{ x: 900, y: 150, type: "enemy1" },
-			// 	{ x: 1100, y: 100, type: "enemy1" },
-			// 	{ x: 1400, y: 100, type: "enemy1" },
-			// 	{ x: 1200, y: 100, type: "enemy1" },
-			// 	{ x: 1000, y: 150, type: "enemy1" },
-			// ];
 
 			var bullets = [];
 			function displayHero() {
@@ -199,7 +237,7 @@
 
 			function displayEnemies() {
 				if (enemies.length < 1) {
-					alert("you win");
+					// alert("you win");
 				} else {
 					var output = "";
 					for (var i = 0; i < enemies.length; i++) {
@@ -358,7 +396,7 @@
 				for (var i = 0; i < enemies.length; i++) {
 					enemies[i].y += 5;
 					// 800
-					if (enemies[i].y > 690) {
+					if (enemies[i].y > 685) {
 						if (enemies[i].type == "explosion") {
 							enemies[i] = enemies[enemies.length - 1];
 							enemies.pop();
@@ -386,18 +424,20 @@
 			setInterval(() => {
 				// var isgameOver = returnHeroStatus();
 				if (hero.score < 0) {
+					// hero.score = 0;
 					displayScore();
 					document.getElementById("game-over-message").style.display = "block";
+					document.getElementById("difficulty-settings").style.display = "none";
 					// clearInterval()
 					// alert("game over kana boi");
-					setTimeout(() => {
-						window.location.reload();
-					}, 2500);
+					// setTimeout(() => {
+					// 	window.location.reload();
+					// }, 2500);
 				} else {
 					// alert(isgameOver);
 					gameLoop();
 				}
-			}, 100);
+			}, defaultSpeed);
 			// on init
 		</script>
 	</body>
