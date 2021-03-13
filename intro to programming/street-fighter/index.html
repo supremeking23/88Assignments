@@ -1,3 +1,5 @@
+<!-- https://w3samples.com/Sprite-Get-Position -->
+
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -58,12 +60,35 @@
 				height: 30px;
 				position: absolute;
 			}
+
+			.wave-impact {
+				/* -81px -337px */
+				background: url("ken.png") -82px -336px;
+				width: 30px;
+				height: 30px;
+				position: absolute;
+			}
+
+			.normal {
+				background: url("ken.png") -9px -402px;
+				width: 30px;
+				height: 50px;
+				position: absolute;
+			}
+
+			.normal-impact {
+				background: url("ken.png") -90px -418px;
+				width: 30px;
+				height: 50px;
+				position: absolute;
+			}
 		</style>
 	</head>
 	<body>
 		<div id="background">
 			<div id="character1"></div>
 			<div id="waves"></div>
+			<div id="normals"></div>
 			<div id="character2"></div>
 
 			<div id="healthbar1"></div>
@@ -80,6 +105,7 @@
 			};
 
 			var waves = [];
+			var normal = [];
 
 			var character2 = {
 				top: 170,
@@ -88,6 +114,11 @@
 			};
 
 			function displayCharacters() {
+				console.log(
+					`chracter1 left ${character1.left} , c2 left 1st ${
+						character2.left - 150
+					}, 2nd ${character2.left + 50}`
+				);
 				document.getElementById("character1").style.top = character1.top + "px";
 				document.getElementById("character1").style.left =
 					character1.left + "px";
@@ -113,10 +144,16 @@
 						which_frame = 0;
 					}
 				} else if (action == "PUNCH") {
+					// if (
+					// 	which_frame == 2 &&
+					// 	character1.left > character2.left - 150 &&
+					// 	character1.left < character2.left + 50
+					// )
+
 					if (
 						which_frame == 2 &&
-						character1.left > character2.left - 150 &&
-						character1.left < character2.left + 50
+						character1.left >= 360 &&
+						character1.left <= 400
 					) {
 						character2.health = character2.health - 5;
 					}
@@ -131,8 +168,8 @@
 				} else if (action == "ROUND_KICK") {
 					if (
 						which_frame == 2 &&
-						character1.left > character2.left - 150 &&
-						character1.left < character2.left + 50
+						character1.left >= 360 &&
+						character1.left <= 400
 					) {
 						character2.health = character2.health - 8;
 					}
@@ -174,9 +211,44 @@
 						which_frame = 0;
 						action = "STANDING";
 
-						waves.push({ left: character1.left + 45, top: character1.top + 0 });
+						waves.push({
+							left: character1.left + 45,
+							top: character1.top + 0,
+							waveClass: "wave",
+						});
+					}
+				} else if (action == "NORMAL") {
+					document.getElementById("character1").style.background =
+						"url('ken.png') -" + which_frame * 70 + "px -1px";
+
+					which_frame = which_frame + 1;
+
+					if (which_frame >= 4) {
+						which_frame = 0;
+						action = "STANDING";
+
+						normal.push({
+							left: character1.left + 45,
+							top: character1.top - 12,
+							normalClass: "normal",
+						});
 					}
 				}
+
+				// else if (action == "KNEEL") {
+				// 	document.getElementById("character1").style.background =
+				// 		"url('ken.png') -" + which_frame * 70 + "px -744px";
+				// 	document.getElementById("character1").style.height = "60px";
+
+				// 	which_frame = which_frame + 1;
+				// 	// character1.top += 10;
+
+				// 	if (which_frame >= 7) {
+				// 		which_frame = 0;
+				// 		action = "STANDING";
+				// 		document.getElementById("character1").style.height = "80px";
+				// 	}
+				// }
 
 				// health bar for game over --- player 2
 				if (document.getElementById("healthbar2").style.width == 0 + "px") {
@@ -189,7 +261,7 @@
 			function displayWaves() {
 				var output = "";
 				for (var i = 0; i < waves.length; i++) {
-					output += `<div class="wave" style="top:${waves[i].top}px;left:${waves[i].left}px;"></div>`;
+					output += `<div class="${waves[i].waveClass}" style="top:${waves[i].top}px;left:${waves[i].left}px;"></div>`;
 				}
 				// console.log(output);
 				document.getElementById("waves").innerHTML = output;
@@ -199,16 +271,49 @@
 				for (var i = 0; i < waves.length; i++) {
 					waves[i].left += 5;
 
-					document.querySelectorAll(`waves`);
+					// document.querySelectorAll(`waves`);
+
+					if (waves[i].left > character2.left - 5) {
+						waves[i].waveClass = "wave-impact";
+					}
 
 					if (waves[i].left > character2.left) {
 						waves[i] = waves[waves.length - 1];
-						// waves.pop();
+
+						//decrease hp points when it lands
+						character2.health -= 30;
+						waves.pop();
+					}
+				}
+			}
+
+			function displayNormal() {
+				var output = "";
+				for (var i = 0; i < normal.length; i++) {
+					output += `<div class="${normal[i].normalClass}" style="top:${normal[i].top}px;left:${normal[i].left}px;"></div>`;
+				}
+				// console.log(output);
+				document.getElementById("normals").innerHTML = output;
+			}
+
+			function moveNormal() {
+				for (var i = 0; i < normal.length; i++) {
+					normal[i].left += 5;
+
+					// document.querySelectorAll(`waves`);
+
+					if (normal[i].left > character2.left - 5) {
+						// normal[i].top = 5;
+						normal[i].normalClass = "normal-impact";
 					}
 
-					// if (bullets[i].y < 0) {
-					// 	bullets.shift();
-					// }
+					if (normal[i].left > character2.left) {
+						normal[i] = normal[normal.length - 1];
+
+						//decrease hp points when it lands
+						character2.health -= 20;
+						normal.pop();
+					}
 				}
 			}
 
@@ -219,7 +324,7 @@
 			}
 
 			document.onkeydown = function (e) {
-				console.log(e);
+				console.log(e.keyCode);
 				if (e.keyCode == 37 && character1.left > 0) {
 					character1.left = character1.left - 10;
 				} else if (e.keyCode == 39 && character1.left < 800) {
@@ -236,7 +341,15 @@
 				} else if (e.keyCode == 188) {
 					//comma
 					action = "SUPER";
+				} else if (e.keyCode == 77) {
+					//comma
+					action = "NORMAL";
 				}
+
+				// else if (e.keyCode == 40) {
+				// 	//Kneel
+				// 	action = "KNEEL";
+				// }
 
 				which_frame = 0;
 			};
@@ -247,6 +360,9 @@
 
 				displayWaves();
 				moveWaves();
+
+				displayNormal();
+				moveNormal();
 			}
 			setInterval(GameLoop, 150);
 
