@@ -29,17 +29,28 @@
 			.row {
 				height: 20px;
 			}
-
+			/* 
 			.brick {
 				background-color: #842020;
 			}
 
-			/* div.row div:nth-child(2n) {
-				background: red;
-			} */
-
 			.brick:nth-of-type(2n) {
 				background: #9e3333;
+			} */
+
+			.brick-choco {
+				background: url("./assets/choco.jpg");
+			}
+			.brick-box {
+				background: url("./assets/box.jpg");
+			}
+
+			.brick-block {
+				background: url("./assets/block.jpg");
+			}
+
+			.brick-block2 {
+				background: url("./assets/block2.png");
 			}
 
 			.coin {
@@ -131,7 +142,7 @@
 				align-items: center;
 				display: flex;
 				flex-direction: column;
-				width: 50%;
+				width: 39%;
 			}
 
 			.title {
@@ -4465,6 +4476,18 @@
 				world = pickWorld();
 			}
 
+			function brickGenerator() {
+				var bricks = [
+					"brick-choco",
+					"brick-box",
+					"brick-block",
+					"brick-block2",
+				];
+
+				return bricks[Math.floor(Math.random() * bricks.length)];
+			}
+
+			var brick = brickGenerator();
 			function displayWorld() {
 				var output = "";
 				for (var i = 0; i < world.length; i++) {
@@ -4472,7 +4495,7 @@
 					for (var j = 0; j < world[i].length; j++) {
 						// output = output + world[i][j];
 						if (world[i][j] == 2) {
-							output += "<div class='brick'></div>";
+							output += `<div class="${brick}"></div>`;
 						} else if (world[i][j] == 1) {
 							output += "<div class='coin'></div>";
 						} else if (world[i][j] == 3) {
