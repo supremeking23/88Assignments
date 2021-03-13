@@ -238,16 +238,32 @@
 
 // console.log(swap([1, 5, 10, -2]));
 
-var msg = "codingdojo";
+// var msg = "codingdojo";
 
-for (var x = -1; x < msg.length - 4; x++) {
-	if (msg.length == 2) {
-		for (var i = 3; i < 3; i++) {
-			console.log(i);
-		}
-	} else {
-		for (var i = msg.length; i > msg.length - 3; i--) {
-			console.log(i);
-		}
+// for (var x = -1; x < msg.length - 4; x++) {
+// 	if (msg.length == 2) {
+// 		for (var i = 3; i < 3; i++) {
+// 			console.log(i);
+// 		}
+// 	} else {
+// 		for (var i = msg.length; i > msg.length - 3; i--) {
+// 			console.log(i);
+// 		}
+// 	}
+// }
+
+var string = "ivan christian jay";
+var arrNew = [];
+var indexWithSpace = [];
+for (var i = 0; i < string.length; i++) {
+	// console.log(string[i]);
+	arrNew.push(string[i]);
+}
+
+// get the index of spaces
+for (var i = 0; i < arrNew.length; i++) {
+	// console.log(string[i]);
+	if (arrNew[i] == " ") {
+		indexWithSpace.push(i);
 	}
 }

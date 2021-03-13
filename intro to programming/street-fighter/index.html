@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+
+		<style>
+			body {
+				background-color: black;
+			}
+			#background {
+				width: 800px;
+				height: 260px;
+				background: url("background_blanka.gif");
+				background-size: cover;
+			}
+
+			#character1 {
+				background: url("ken.png") 0px -80px;
+				width: 70px;
+				height: 80px;
+				position: absolute;
+			}
+			#character2 {
+				background: url("ken.png") -70px -160px;
+				width: 70px;
+				height: 80px;
+				position: absolute;
+				transform: scaleX(-1);
+			}
+			#healthbar1 {
+				width: 200px;
+				height: 15px;
+				background-color: lightgreen;
+				border: 3px solid green;
+				position: absolute;
+				top: 30px;
+				left: 25px;
+			}
+			#healthbar2 {
+				width: 200px;
+				height: 15px;
+				background-color: pink;
+				border: 3px solid red;
+				position: absolute;
+				top: 30px;
+				left: 325px;
+
+				/* change later */
+				display: block;
+			}
+
+			.wave {
+				background: url("ken.png") -12px -337px;
+				width: 30px;
+				height: 30px;
+				position: absolute;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="background">
+			<div id="character1"></div>
+			<div class="wave"></div>
+			<div id="character2"></div>
+
+			<div id="healthbar1"></div>
+			<div id="healthbar2"></div>
+		</div>
+		<script>
+			var action = "STANDING";
+			var which_frame = 0;
+
+			var character1 = {
+				top: 170, //258
+				left: 270,
+				health: 100,
+			};
+
+			var wave = {
+				top: 170,
+				left: 270,
+			};
+
+			var character2 = {
+				top: 170,
+				left: 400,
+				health: 100,
+			};
+
+			function displayCharacters() {
+				document.getElementById("character1").style.top = character1.top + "px";
+				document.getElementById("character1").style.left =
+					character1.left + "px";
+
+				document.getElementById("character2").style.top = character2.top + "px";
+				document.getElementById("character2").style.left =
+					character2.left + "px";
+
+				document.getElementById("healthbar1").style.width =
+					character1.health * 2.3 + "px";
+				document.getElementById("healthbar2").style.width =
+					character2.health * 2.3 + "px";
+
+				if (action == "STANDING") {
+					document.getElementById("character1").style.background =
+						"url('ken.png') -" + which_frame * 70 + "px -80px";
+
+					document.getElementById("character2").style.background =
+						"url('ken.png') -" + which_frame * 70 + "px -80px";
+					which_frame = which_frame + 1;
+
+					if (which_frame >= 4) {
+						which_frame = 0;
+					}
+				} else if (action == "PUNCH") {
+					if (
+						which_frame == 2 &&
+						character1.left > character2.left - 150 &&
+						character1.left < character2.left + 50
+					) {
+						character2.health = character2.health - 5;
+					}
+					document.getElementById("character1").style.background =
+						"url('ken.png') -" + which_frame * 70 + "px -160px";
+					which_frame = which_frame + 1;
+
+					if (which_frame >= 3) {
+						which_frame = 0;
+						action = "STANDING";
+					}
+				} else if (action == "ROUND_KICK") {
+					if (
+						which_frame == 2 &&
+						character1.left > character2.left - 150 &&
+						character1.left < character2.left + 50
+					) {
+						character2.health = character2.health - 8;
+						console.log(character2.health);
+					}
+
+					document.getElementById("character1").style.background =
+						"url('ken.png') -" + which_frame * 70 + "px -560px";
+					which_frame = which_frame + 1;
+
+					if (which_frame >= 5) {
+						which_frame = 0;
+						action = "STANDING";
+					}
+				}
+
+				// jump
+				else if (action == "JUMP") {
+					document.getElementById("character1").style.background =
+						"url('ken.png') -" + which_frame * 70 + "px -640px";
+					which_frame = which_frame + 1;
+					character1.top -= 10;
+					if (which_frame >= 8) {
+						// for (var i = which_frame; i >= 1; i--) {
+						// 	character1.top += 10;
+						// }
+						which_frame = 0;
+						action = "STANDING";
+						character1.top = 170;
+					}
+				} else if (action == "SUPER") {
+					document.getElementById("character1").style.background =
+						"url('ken.png') -" + which_frame * 70 + "px -1px";
+
+					wave.x = character1.x;
+
+					which_frame = which_frame + 1;
+
+					if (which_frame >= 4) {
+						// for (var i = which_frame; i >= 1; i--) {
+						// 	character1.top += 10;
+						// }
+						which_frame = 0;
+						action = "STANDING";
+					}
+				}
+
+				// health bar for game over --- player 2
+				if (document.getElementById("healthbar2").style.width == 0 + "px") {
+					document.getElementById("healthbar2").style.display = "none";
+					// alert("game over");
+					//need to add setTimeout to display game over
+				}
+			}
+
+			function monitorHealthBar() {
+				if (character2.health < 0) {
+					character2.health = 0;
+				}
+			}
+
+			document.onkeydown = function (e) {
+				console.log(e);
+				if (e.keyCode == 37 && character1.left > 0) {
+					character1.left = character1.left - 10;
+				} else if (e.keyCode == 39 && character1.left < 800) {
+					character1.left = character1.left + 10;
+				} else if (e.keyCode == 190) {
+					action = "PUNCH";
+					//period
+				} else if (e.keyCode == 191) {
+					action = "ROUND_KICK";
+					//forward slash
+				} else if (e.keyCode == 32) {
+					//space
+					action = "JUMP";
+				} else if (e.keyCode == 188) {
+					//comma
+					action = "SUPER";
+				}
+
+				which_frame = 0;
+			};
+
+			function GameLoop() {
+				displayCharacters();
+				monitorHealthBar();
+			}
+			setInterval(GameLoop, 150);
+
+			displayCharacters();
+		</script>
+	</body>
+</html>
