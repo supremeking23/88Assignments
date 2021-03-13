@@ -1,11 +1,24 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 	<head>
 		<title>1942 Game</title>
-
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+			rel="stylesheet"
+		/>
 		<style type="text/css">
 			body {
 				background-color: black;
 			}
+
+			h1 {
+				font-family: "Press Start 2P", cursive;
+			}
+
 			#container {
 				background: url("field-2.jpg");
 				width: 100%;
@@ -90,6 +103,18 @@
 				font-size: 30px;
 				font-family: Arial;
 			}
+
+			#game-over-message {
+				position: absolute;
+				border: 10px solid red;
+				top: 200px;
+				left: 450px;
+				background-color: white;
+				padding: 10px;
+				font-size: 30px;
+				font-family: Arial;
+				display: none;
+			}
 		</style>
 	</head>
 	<body>
@@ -100,6 +125,9 @@
 		</div>
 
 		<div id="score"></div>
+		<div id="game-over-message">
+			<h1>Game Over</h1>
+		</div>
 
 		<script>
 			var fire = new Audio("sounds/fire.mp3");
@@ -359,8 +387,12 @@
 				// var isgameOver = returnHeroStatus();
 				if (hero.score < 0) {
 					displayScore();
+					document.getElementById("game-over-message").style.display = "block";
 					// clearInterval()
 					// alert("game over kana boi");
+					setTimeout(() => {
+						window.location.reload();
+					}, 2500);
 				} else {
 					// alert(isgameOver);
 					gameLoop();
