@@ -179,21 +179,21 @@
 
 				generateEnemies();
 
-				setInterval(() => {
-					// var isgameOver = returnHeroStatus();
-					if (hero.score < 0) {
-						hero.score = 0;
-						displayScore();
-						document.getElementById("game-over-message").style.display =
-							"block";
-						document.getElementById("difficulty-settings").style.display =
-							"none";
-					} else {
-						// alert(isgameOver);
-						generateEnemies();
-						gameLoop();
-					}
-				}, defaultSpeed);
+				// setInterval(() => {
+				// 	// var isgameOver = returnHeroStatus();
+				// 	if (hero.score < 0) {
+				// 		hero.score = 0;
+				// 		displayScore();
+				// 		document.getElementById("game-over-message").style.display =
+				// 			"block";
+				// 		document.getElementById("difficulty-settings").style.display =
+				// 			"none";
+				// 	} else {
+				// 		// alert(isgameOver);
+				// 		generateEnemies();
+				// 		gameLoop();
+				// 	}
+				// }, defaultSpeed);
 			});
 
 			var hero = {
@@ -422,8 +422,9 @@
 			}
 
 			// setInterval(l(), 100);
-			setInterval(() => {
-				// var isgameOver = returnHeroStatus();
+
+			function intervalFunction() {
+				console.log("rune");
 				if (hero.score < 0) {
 					// hero.score = 0;
 					displayScore();
@@ -434,11 +435,18 @@
 					// setTimeout(() => {
 					// 	window.location.reload();
 					// }, 2500);
+					// clearInterval(intervalFunction);
 				} else {
 					// alert(isgameOver);
 					gameLoop();
 				}
-			}, defaultSpeed);
+
+				// gameLoop();
+			}
+			setInterval(intervalFunction, defaultSpeed);
+			if (hero.score < 0) {
+			}
+
 			// on init
 		</script>
 	</body>

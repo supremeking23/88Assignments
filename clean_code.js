@@ -3,7 +3,7 @@ function sumAll(a, b) {
 	var c = a + b;
 	return c;
 }
-// console.log(sumAll(2, 5));
+console.log(sumAll(2, 5));
 
 //example 2
 function abc(a, b, c, d, e) {

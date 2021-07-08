@@ -180,13 +180,13 @@
 				<div id="score">0</div>
 
 				<div class="title">
-					<h1>Pacman Game</h1>
+					<h1>Pacman Next Gen.</h1>
 					<div id="message"></div>
 					<div class="instructions">
 						<h2>Instructions</h2>
 						<ul>
 							<li>Press Spacebar to randomly select a maze</li>
-							<li>use to dropdown menu to select a maze</li>
+							<li>Use the dropdown menu to select a maze</li>
 						</ul>
 						<select name="" id="maze-choice" class="maze-selector">
 							<option value="">----------- Pick a maze -----------</option>
@@ -4619,36 +4619,190 @@
 
 				//method 2 //not good as well
 				// && world[redMonter.y][redMonter.x - 1] != 2
-				if (e.keyCode == 37 && pacman.x < redMonter.x) {
-					// if the x coordinate of pacman is less than the coordinate of red make them closer
+				// if (e.keyCode == 37 && pacman.x < redMonter.x) {
+				// 	// if the x coordinate of pacman is less than the coordinate of red make them closer
 
-					if (world[redMonter.y][redMonter.x - 1] != 2) {
+				// 	if (world[redMonter.y][redMonter.x - 1] != 2) {
+				// 		redMonter.x--;
+				// 	}
+
+				// 	// pacman.x -- 20;
+				// } else if (e.keyCode == 39 && pacman.x > redMonter.x) {
+				// 	if (world[redMonter.y][redMonter.x + 1] != 2) {
+				// 		redMonter.x++;
+				// 	}
+
+				// 	//if pacman goes right move left
+				// 	// pacman.x -- 20;
+				// } else if (e.keyCode == 38 && pacman.y > redMonter.y) {
+				// 	if (world[redMonter.y - 1][redMonter.x] != 2) {
+				// 		redMonter.y++;
+				// 	}
+
+				// 	// pacman.x -- 20;
+				// } else if (e.keyCode == 40 && pacman.y < redMonter.y) {
+				// 	if (world[redMonter.y + 1][redMonter.x] != 2) {
+				// 		redMonter.y--;
+				// 	}
+
+				// 	redMonter.y--;
+				// 	// pacman.x -- 20;
+				// 	// if pacman goes down, move up
+				// }
+
+				// red 2
+				if (e.keyCode == 37 && world[redMonter.y][redMonter.x - 1] != 2) {
+					if (
+						pacman.x < redMonter.x &&
+						pacman.y < redMonter.y &&
+						world[redMonter.y - 1][redMonter.x] != 2
+					) {
+						redMonter.y--;
+					} else if (
+						pacman.x < redMonter.x &&
+						pacman.y == redMonter.y &&
+						world[redMonter.y][redMonter.x - 1] != 2
+					) {
 						redMonter.x--;
-					}
-
-					// pacman.x -- 20;
-				} else if (e.keyCode == 39 && pacman.x > redMonter.x) {
-					if (world[redMonter.y][redMonter.x + 1] != 2) {
+					} else if (
+						pacman.x < redMonter.x &&
+						pacman.y > redMonter.y &&
+						world[redMonter.y + 1][redMonter.x] != 2
+					) {
+						redMonter.y++;
+					} else if (
+						pacman.x < redMonter.x &&
+						pacman.y == redMonter.y &&
+						world[redMonter.y][redMonter.x + 1] != 2
+					) {
+						redMonter.x++;
+					} else if (
+						pacman.x > redMonter.x &&
+						pacman.y == redMonter.y &&
+						world[redMonter.y][redMonter.x + 1] != 2
+					) {
 						redMonter.x++;
 					}
-
-					//if pacman goes right move left
-					// pacman.x -- 20;
-				} else if (e.keyCode == 38 && pacman.y > redMonter.y) {
-					if (world[redMonter.y - 1][redMonter.x] != 2) {
+				} else if (
+					e.keyCode == 39 &&
+					world[redMonter.y][redMonter.x + 1] != 2
+				) {
+					if (
+						pacman.x > redMonter.x &&
+						pacman.y < redMonter.y &&
+						world[redMonter.y - 1][redMonter.x] != 2
+					) {
+						redMonter.y--;
+					} else if (
+						pacman.x > redMonter.x &&
+						pacman.y == redMonter.y &&
+						world[redMonter.y][redMonter.x + 1] != 2
+					) {
+						redMonter.x++;
+					} else if (
+						pacman.x > redMonter.x &&
+						pacman.y > redMonter.y &&
+						world[redMonter.y + 1][redMonter.x] != 2
+					) {
+						redMonter.y++;
+					} else if (
+						pacman.x > redMonter.x &&
+						pacman.y == redMonter.y &&
+						world[redMonter.y][redMonter.x + 1] != 2
+					) {
+						redMonter.x++;
+					} else if (
+						pacman.x < redMonter.x &&
+						pacman.y == redMonter.y &&
+						world[redMonter.y][redMonter.x - 1] != 2
+					) {
+						redMonter.x--;
+					}
+				} else if (
+					e.keyCode == 38 &&
+					world[redMonter.y + 1][redMonter.x] != 2
+				) {
+					if (
+						pacman.x < redMonter.x &&
+						pacman.y < redMonter.y &&
+						world[redMonter.y - 1][redMonter.x] != 2
+					) {
+						redMonter.y--;
+					} else if (
+						pacman.x < redMonter.x &&
+						pacman.y == redMonter.y &&
+						world[redMonter.y][redMonter.x - 1] != 2
+					) {
+						redMonter.x--;
+					} else if (
+						pacman.x > redMonter.x &&
+						pacman.y < redMonter.y &&
+						world[redMonter.y - 1][redMonter.x] != 2
+					) {
+						redMonter.y--;
+					} else if (
+						pacman.x > redMonter.x &&
+						pacman.y == redMonter.y &&
+						world[redMonter.y][redMonter.x + 1] != 2
+					) {
+						redMonter.x++;
+					} else if (
+						pacman.x == redMonter.x &&
+						pacman.y < redMonter.y &&
+						world[redMonter.y - 1][redMonter.x] != 2
+					) {
+						redMonter.y--;
+					} else if (
+						pacman.x == redMonter.x &&
+						pacman.y > redMonter.y &&
+						world[redMonter.y + 1][redMonter.x] != 2
+					) {
 						redMonter.y++;
 					}
-
-					// pacman.x -- 20;
-				} else if (e.keyCode == 40 && pacman.y < redMonter.y) {
-					if (world[redMonter.y + 1][redMonter.x] != 2) {
+				} else if (
+					e.keyCode == 40 &&
+					world[redMonter.y - 1][redMonter.x] != 2
+				) {
+					if (
+						pacman.x > redMonter.x &&
+						pacman.y > redMonter.y &&
+						world[redMonter.y + 1][redMonter.x] != 2
+					) {
+						redMonter.y++;
+					} else if (
+						pacman.x > redMonter.x &&
+						pacman.y == redMonter.y &&
+						world[redMonter.y][redMonter.x + 1] != 2
+					) {
+						redMonter.x++;
+					} else if (
+						pacman.x < redMonter.x &&
+						pacman.y > redMonter.y &&
+						world[redMonter.y + 1][redMonter.x] != 2
+					) {
+						redMonter.y++;
+					} else if (
+						pacman.x < redMonter.x &&
+						pacman.y == redMonter.y &&
+						world[redMonter.y][redMonter.x - 1] != 2
+					) {
+						redMonter.x--;
+					} else if (
+						pacman.x == redMonter.x &&
+						pacman.y > redMonter.y &&
+						world[redMonter.y + 1][redMonter.x] != 2
+					) {
+						redMonter.y++;
+					} else if (
+						pacman.x == redMonter.x &&
+						pacman.y < redMonter.y &&
+						world[redMonter.y - 1][redMonter.x] != 2
+					) {
 						redMonter.y--;
 					}
-
-					redMonter.y--;
-					// pacman.x -- 20;
-					// if pacman goes down, move up
 				}
+
+				//red 2
 
 				//abnormal
 				if (e.keyCode == 37 && world[pinkMonter.y][pinkMonter.x + 1] != 2) {
